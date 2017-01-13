@@ -1,6 +1,6 @@
 const host = 'localhost';
 const port = '3000';
-var webpack = require('webpack')
+const webpack = require('webpack')
 const path = require('path');
 const distPath = path.join(__dirname,'/../','dist' );
 

@@ -1,27 +1,10 @@
+const path = require('path');
+const webpack = require('webpack');
+const express = require('express');
+const config = require('./webpack.config.dev');
 
-// var webpackDevServer = require('webpack-dev-server');
-// var webpack = require('webpack');
-// var config = require('./webpack.config.dev');
-
-// new webpackDevServer(webpack(config), {
-//   publicPath: config.output.publicPath,
-//   hot: true,
-//   headers: { "Access-Control-Allow-Origin": "*" }
-// }).listen(5000, 'localhost', function(err, result){
-//   if(err){
-//     console.PluginError(err);
-//   }
-//   console.log('Webpack hot load server listening on port 5000' );
-// });
-
-
-var path = require('path');
-var webpack = require('webpack');
-var express = require('express');
-var config = require('./webpack.config.dev');
-
-var app = express();
-var compiler = webpack(config);
+const app = express();
+const compiler = webpack(config);
 
 app.use(require('webpack-dev-middleware')(compiler, {
 noInfo: true,  
@@ -38,6 +21,5 @@ app.listen(3000, function(err) {
   if (err) {
     return console.error(err);
   }
-
-  console.log('Listening at http://localhost:3000/');
-})
+  cosole.log('Listening at http://localhost:3000/');
+}

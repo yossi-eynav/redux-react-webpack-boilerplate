@@ -1,7 +1,6 @@
-var webpack = require('webpack')
+const webpack = require('webpack')
 const path = require('path');
-const distPath = path.join(__dirname,'/../','dist' );
-
+const distPath = path.join(__dirname, '/../', 'dist' );
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -16,8 +15,9 @@ module.exports = {
         filename: "bundle.js"
     },
     plugins: [
-            new CopyWebpackPlugin([
-            {from: './assets', to: distPath}
+            new CopyWebpackPlugin([{
+                from: './assets', to: distPath
+            }
         ]),
     ],
     module: {
