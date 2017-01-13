@@ -1,5 +1,3 @@
-const host = 'localhost';
-const port = '3000';
 var webpack = require('webpack')
 const path = require('path');
 const distPath = path.join(__dirname,'/../','dist' );
@@ -10,22 +8,14 @@ module.exports = {
     devtool: 'cheap-module-eval-source-map',
     context: __dirname+ '/..',
     progress: true,
-    devServer: {
-          headers: { "Access-Control-Allow-Origin": "*" },
-          outputPath: path.join(__dirname, 'dist'),
-          hot: true
-    },
     entry: [
-        'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
         "./src/index.js"
     ],
     output: {
         path: distPath,
-        filename: "bundle.js",
-        publicPath: 'http://' + host + ':' + port + "/"
+        filename: "bundle.js"
     },
     plugins: [
-            new webpack.HotModuleReplacementPlugin(),
             new CopyWebpackPlugin([
             {from: './assets', to: distPath}
         ]),
@@ -34,7 +24,7 @@ module.exports = {
         loaders: [
             {
                 test: /\.js$/,
-                loaders: ['react-hot','babel-loader'],
+                loaders: ['babel-loader'],
                 include: path.join(__dirname, '../','src')
             },
             {
