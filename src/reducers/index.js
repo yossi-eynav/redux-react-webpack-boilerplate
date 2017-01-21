@@ -3,6 +3,7 @@ import {ACCESS_KEY_ENTERED_ACTION} from '../actions/index';
 
 const initialState = Immutable.Map()
                               .set('searchSuggestions', [])
+                              .set('menuSelectedOption', 'search')
                               .set('accessToken', localStorage.getItem('accessToken'))
                               .set('users', [])
                               .set('involves', [])

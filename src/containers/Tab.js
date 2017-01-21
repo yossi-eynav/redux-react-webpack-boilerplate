@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { saveAccessToken, searchCode, getSuggestions, setMenuOption, fetchUsers, getInvolvement} from '../actions'
-import PopupWindow from '../components/PopupWindow'
+import TabWindow from '../components/TabWindow'
 
 
 
@@ -31,9 +31,11 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   }
 };
 
-const Popup = connect(
+// let boundActionCreators = bindActionCreators(TodoActionCreators, dispatch)
+
+const Tab = connect(
   mapStateToProps,
   mapDispatchToProps
-)(PopupWindow)
+)(TabWindow);
 
-export default Popup
+export default Tab;

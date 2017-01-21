@@ -6,7 +6,13 @@
   "homepage_url": "http://extensionizr.com",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action": {
-    "default_title": "demo",
-    "default_popup": "index.html"
+    "default_title": "demo"
+  },
+  "permissions": [
+    "tabs"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
   }
 }

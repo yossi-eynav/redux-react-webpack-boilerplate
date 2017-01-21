@@ -1,18 +1,12 @@
 import React from 'react'
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
-import AutoComplete from 'material-ui/AutoComplete';
 import MainMenu from './MainMenu/MainMenu'
 import InvolveTab from './Tabs/involves/Involves'
 import SearchCode from './Tabs/SearchCode/SearchCode'
 import Settings from './Tabs/Settings/Settings'
 import Snackbar from 'material-ui/Snackbar';
-import RefreshIndicator from 'material-ui/RefreshIndicator';
 
 
-
-
-class PopupWindow extends React.Component {
+class TabWindow extends React.Component {
 
     content() {
         const {menuSelectedOption,users, fetchUsers, searchCode, codeMatches,saveAccessToken, getInvolvement, involves, accessToken} = this.props;
@@ -49,4 +43,4 @@ class PopupWindow extends React.Component {
     }
 }
 
-export default PopupWindow;
+export default TabWindow;

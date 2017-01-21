@@ -40,7 +40,7 @@ return (
                 return (
 
 
-                <Card style={{marginBottom: '60px'}}>
+                <Card key={match.sha} style={{marginBottom: '60px'}}>
                     <CardTitle  title={ match.repository.name}  subtitle={match.name}  />
                     <CardText>
                         <div className="code-match">
