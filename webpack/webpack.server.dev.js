@@ -21,5 +21,6 @@ app.listen(3000, function(err) {
   if (err) {
     return console.error(err);
   }
-  cosole.log('Listening at http://localhost:3000/');
+  console.log('Listening at http://localhost:3000/');
 }
+)

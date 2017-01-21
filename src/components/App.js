@@ -1,14 +1,23 @@
 import React from 'react'
-import Footer from './Footer'
-import AddTodo from '../containers/AddTodo'
-import VisibleTodoList from '../containers/VisibleTodoList'
+import Popup from '../containers/Popup'
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+
+
+
+injectTapEventPlugin();
+
+function isPopupView(){
+  return window.location.search.match('popup')
+}
 
 const App = () => (
-  <div>
-    <AddTodo />
-    <VisibleTodoList />
-    <Footer />
-  </div>
+    <MuiThemeProvider>
+      <div>
+        { isPopupView() ? <Popup /> : <div />}
+      </div>
+    </MuiThemeProvider>
 )
 
 export default App
