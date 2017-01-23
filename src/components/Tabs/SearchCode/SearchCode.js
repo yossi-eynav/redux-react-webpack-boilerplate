@@ -3,7 +3,10 @@ import './SearchCode.scss'
 import TextField from 'material-ui/TextField';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/FlatButton';
+import Prism from 'prismjs'
 
+var code = "var data = 1;";
+var html = Prism.highlight(code, Prism.languages.javascript);
 
 
 class SearchCode extends React.Component{
@@ -38,8 +41,6 @@ return (
 
             {codeMatches.map((match) => {
                 return (
-
-
                 <Card key={match.sha} style={{marginBottom: '60px'}}>
                     <CardTitle  title={ match.repository.name}  subtitle={match.name}  />
                     <CardText>

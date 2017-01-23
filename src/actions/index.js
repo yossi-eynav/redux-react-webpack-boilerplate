@@ -48,11 +48,26 @@ const searchCode = (query) => {
   }
 };
 
+
+function getRepositories() {
+    const date = moment().add(-1, 'months').format('YYYY-MM-DD');
+    return (dispatch, getState) => {
+        const token = getState().get('accessToken');
+        return fetch(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
+            .then((response) => response.json())
+            .then((response) => {
+                dispatch({type:'FETCHED_REPOSITORIES',repositories: response.items});
+            })
+    };
+}
+
+
 const getPullRequests = () => {
 
     return (dispatch, getState) => {
         dispatch(startFetching());
-        const token = getState().get('accessToken');
+        const state = getState();
+        const token = state.get('accessToken');
         let repositories = [];
 
         // function getRepositories(url = null ) {
@@ -84,18 +99,8 @@ const getPullRequests = () => {
         //         })
         // }
 
-        function getRepositories() {
-                const date = moment().add(-1, 'months').format('YYYY-MM-DD');
-                return fetch(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
-                    .then((response) => response.json())
-                            .then((response) => {
-                                return response.items;
-                            })
-
-        }
-
-        getRepositories()
-            .then((repositories) => {
+            new Promise(() => {
+                repositories = state.get('repositories');
                 Promise.all(repositories.map((repository) => {
                     return fetch(`https://api.github.com/repos/fiverr/${repository.name}/pulls?access_token=${token}&per_page=100&state=open`)
                         .then((response) => response.json())
@@ -175,8 +180,12 @@ const getInvolvement = (userName) => {
     return fetch(`https://api.github.com/search/issues?q=+org:fiverr+involves:${userName}&access_token=${token}&per_page=60`)
         .then((response) => response.json())
         .then(json => {
+            const involves =  json.items.map(involve => {
+                involve.repositoryName = (involve.repository_url.match(/([a-zA-Z0-9_]*)$/gi) || [])[0];
+                return involve;
+            });
             dispatch(endFetching());
-            dispatch({type:'FETCHED_INVOLVES', involves: json.items});
+            dispatch({type:'FETCHED_INVOLVES', involves});
           return json;
         })
   }
@@ -191,5 +200,6 @@ export {
    getSuggestions,
     getInvolvement,
     fetchUsers,
-    setMenuOption
+    setMenuOption,
+    getRepositories
 };

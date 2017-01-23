@@ -1,5 +1,5 @@
 const host = 'localhost';
-const port = '3000';
+const port = '4444';
 const webpack = require('webpack')
 const path = require('path');
 const distPath = path.join(__dirname,'/../','dist' );
@@ -7,7 +7,7 @@ const distPath = path.join(__dirname,'/../','dist' );
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'source-map',
     context: __dirname+ '/..',
     progress: true,
     devServer: {
