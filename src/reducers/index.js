@@ -7,6 +7,7 @@ const initialState = Immutable.Map()
                               .set('accessToken', localStorage.getItem('accessToken'))
                               .set('users', [])
                               .set('involves', [])
+                              .set('pullRequests', [])
                               .set('codeMatches', [])
                               .set('fetching', false);
 
@@ -38,6 +39,9 @@ const reducers = (state = initialState , action) => {
       break;
     case 'FETCHED_INVOLVES':
       return state.set('involves', action.involves);
+      break;
+    case 'FETCHED_PRs':
+      return state.set('pullRequests', action.pullRequests);
       break;
     default:
       return state

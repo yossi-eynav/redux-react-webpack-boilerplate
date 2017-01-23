@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { saveAccessToken, searchCode, getSuggestions, setMenuOption, fetchUsers, getInvolvement} from '../actions'
+import { saveAccessToken, searchCode, getSuggestions, setMenuOption, fetchUsers, getInvolvement, getPullRequests} from '../actions'
 import TabWindow from '../components/TabWindow'
 
 
@@ -12,7 +12,8 @@ const mapStateToProps = (state, ownProps) => {
     users: state.get('users'),
     involves: state.get('involves'),
     codeMatches: state.get('codeMatches'),
-    fetching: state.get('fetching')
+    fetching: state.get('fetching'),
+    pullRequests: state.get('pullRequests')
   }
 };
 
@@ -27,7 +28,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     getSuggestions: () => { dispatch(getSuggestions())},
     setMenuOption: (option) => {dispatch(setMenuOption(option))},
     fetchUsers: (query)=> {dispatch(fetchUsers(query))},
-    getInvolvement: (userName)=> {dispatch(getInvolvement(userName))}
+    getInvolvement: (userName)=> {dispatch(getInvolvement(userName))},
+    getPullRequests: () => dispatch(getPullRequests())
   }
 };
 

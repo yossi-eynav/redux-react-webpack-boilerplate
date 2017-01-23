@@ -10,6 +10,7 @@ return (
         <Menu className="menu" onChange={((_, val) => {setMenuOption(val)})}>
           <MenuItem value="search" >Search Code</MenuItem>
           <MenuItem  value="involves">Involves</MenuItem>
+          <MenuItem  value="pull_requests">Pull Requests</MenuItem>
           <MenuItem value="settings" >Settings</MenuItem>
         </Menu>
 )

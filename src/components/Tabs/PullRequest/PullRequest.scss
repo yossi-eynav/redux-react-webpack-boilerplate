@@ -1,0 +1,24 @@
+.pull-requests{
+  .num {
+    width: 2%;
+  }
+
+  .type,.status {
+    width: 50px;
+  }
+  .creator small {
+    position: relative;
+    top: -15px;
+    left: 10px;
+    font-size: 12px;
+  }
+
+  .title {
+    width: 400px;
+  }
+
+  .body {
+    width: 500px;
+  }
+
+}

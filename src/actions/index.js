@@ -1,5 +1,6 @@
 const ACCESS_KEY_ENTERED_ACTION = 'ACCESS_KEY_ENTERED'
 const SEARCH = 'SEARCH'
+import moment from 'moment';
 
 const startFetching = () => {
     return {
@@ -47,6 +48,76 @@ const searchCode = (query) => {
   }
 };
 
+const getPullRequests = () => {
+
+    return (dispatch, getState) => {
+        dispatch(startFetching());
+        const token = getState().get('accessToken');
+        let repositories = [];
+
+        // function getRepositories(url = null ) {
+        //
+        //     let nextPage = null;
+        //
+        //     if (!url) {
+        //         url =  `https://api.github.com/search/repositories?q=+org:fiverr&access_token=${token}&per_page=100`;
+        //     }
+        //
+        //     fetch(url).then((response) => {
+        //             const LinkHeader = response.headers.get('Link');
+        //             if (LinkHeader) {
+        //                 nextPage = LinkHeader.match(/<(.*)>; rel="next"/)[1]
+        //             } else {
+        //                 nextPage = null;
+        //             }
+        //             return {nextPage, data: response.json()}
+        //         })
+        //         .then(({nextPage, data}) => {
+        //             repositories.push(data.items);
+        //             // debugger;
+        //             // dispatch(endFetching());
+        //             // dispatch({type:'FETCHED_INVOLVES', involves: json.items});
+        //             return nextPage;
+        //         })
+        //         .then((nextPage) => {
+        //             return nextPage ? getRepositories(nextPage) : repositories
+        //         })
+        // }
+
+        function getRepositories() {
+                const date = moment().add(-1, 'months').format('YYYY-MM-DD');
+                return fetch(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
+                    .then((response) => response.json())
+                            .then((response) => {
+                                return response.items;
+                            })
+
+        }
+
+        getRepositories()
+            .then((repositories) => {
+                Promise.all(repositories.map((repository) => {
+                    return fetch(`https://api.github.com/repos/fiverr/${repository.name}/pulls?access_token=${token}&per_page=100&state=open`)
+                        .then((response) => response.json())
+                })).then((results) => {
+                    const pullRequests = results
+                                            .reduce((a,b) => a.concat(b))
+                                            .filter((item)=> moment().add(-2,'months').isBefore(item.updated_at))
+                                            .sort((a,b) => {
+                                                return moment(a.updated_at).isBefore(b.updated_at) ? 1 : -1
+                                            });
+
+                    dispatch(endFetching());
+                    dispatch({type:'FETCHED_PRs', pullRequests});
+                })
+
+
+
+            })
+    }
+
+
+};
 
 const saveAccessToken = (accessToken) => {
   return {
@@ -115,6 +186,7 @@ export {
    ACCESS_KEY_ENTERED_ACTION,
    SEARCH,
     searchCode,
+    getPullRequests,
    saveAccessToken,
    getSuggestions,
     getInvolvement,
