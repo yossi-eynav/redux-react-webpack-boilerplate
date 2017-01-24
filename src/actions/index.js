@@ -56,7 +56,8 @@ function getRepositories() {
         return fetch(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
             .then((response) => response.json())
             .then((response) => {
-                dispatch({type:'FETCHED_REPOSITORIES',repositories: response.items});
+                const repositories = response.items.filter((repo) => repo.size != 0);
+                dispatch({type:'FETCHED_REPOSITORIES',repositories});
             })
     };
 }
@@ -69,36 +70,6 @@ const getPullRequests = () => {
         const state = getState();
         const token = state.get('accessToken');
         let repositories = [];
-
-        // function getRepositories(url = null ) {
-        //
-        //     let nextPage = null;
-        //
-        //     if (!url) {
-        //         url =  `https://api.github.com/search/repositories?q=+org:fiverr&access_token=${token}&per_page=100`;
-        //     }
-        //
-        //     fetch(url).then((response) => {
-        //             const LinkHeader = response.headers.get('Link');
-        //             if (LinkHeader) {
-        //                 nextPage = LinkHeader.match(/<(.*)>; rel="next"/)[1]
-        //             } else {
-        //                 nextPage = null;
-        //             }
-        //             return {nextPage, data: response.json()}
-        //         })
-        //         .then(({nextPage, data}) => {
-        //             repositories.push(data.items);
-        //             // debugger;
-        //             // dispatch(endFetching());
-        //             // dispatch({type:'FETCHED_INVOLVES', involves: json.items});
-        //             return nextPage;
-        //         })
-        //         .then((nextPage) => {
-        //             return nextPage ? getRepositories(nextPage) : repositories
-        //         })
-        // }
-
             new Promise(() => {
                 repositories = state.get('repositories');
                 Promise.all(repositories.map((repository) => {
@@ -116,13 +87,38 @@ const getPullRequests = () => {
                     dispatch({type:'FETCHED_PRs', pullRequests});
                 })
 
-
-
             })
     }
-
-
 };
+
+const getCommits = (since = moment().add(-1,'days').format()) => {
+    return (dispatch, getState) => {
+        dispatch(startFetching());
+        const state = getState();
+        const token = state.get('accessToken');
+        let repositories = [];
+        new Promise(() => {
+            repositories = state.get('repositories');
+            Promise.all(repositories.map((repository) => {
+                return fetch(`https://api.github.com/repos/fiverr/${repository.name}/commits?since=${since}&access_token=${token}&per_page=100&state=open`)
+                    .then((response) => response.json()).then((commits) => {
+                        return commits.map(commit => {
+                            commit.repository = repository;
+                            return commit;
+                        })
+                    })
+            })).then((results) => {
+                const commits = results
+                    .reduce((a,b) => a.concat(b));
+
+                dispatch(endFetching());
+                dispatch({type:'FETCHED_COMMITS', commits});
+            })
+
+        })
+    }
+};
+
 
 const saveAccessToken = (accessToken) => {
   return {
@@ -201,5 +197,6 @@ export {
     getInvolvement,
     fetchUsers,
     setMenuOption,
-    getRepositories
+    getRepositories,
+    getCommits
 };

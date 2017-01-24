@@ -10,6 +10,7 @@ const initialState = Immutable.Map()
                               .set('pullRequests', [])
                               .set('repositories', [])
                               .set('codeMatches', [])
+                              .set('commits', [])
                               .set('fetching', false);
 
 
@@ -47,6 +48,10 @@ const reducers = (state = initialState , action) => {
     case 'FETCHED_REPOSITORIES':
       return state.set('repositories', action.repositories);
       break;
+    case 'FETCHED_COMMITS':
+      return state.set('commits', action.commits);
+      break;
+
     default:
       return state
   }

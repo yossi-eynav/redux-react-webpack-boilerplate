@@ -11,6 +11,7 @@ return (
           <MenuItem value="search" >Search Code</MenuItem>
           <MenuItem  value="involves">Involves</MenuItem>
           <MenuItem  value="pull_requests">Pull Requests</MenuItem>
+          <MenuItem  value="commits">Commits Backlog</MenuItem>
           <MenuItem value="settings" >Settings</MenuItem>
         </Menu>
 )

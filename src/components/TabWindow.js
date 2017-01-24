@@ -4,6 +4,7 @@ import InvolveTab from './Tabs/involves/Involves'
 import SearchCode from './Tabs/SearchCode/SearchCode'
 import Settings from './Tabs/Settings/Settings'
 import PullRequest from './Tabs/PullRequest/PullRequest'
+import Commits from './Tabs/Commits/Commits'
 import Snackbar from 'material-ui/Snackbar';
 
 
@@ -16,7 +17,7 @@ class TabWindow extends React.Component {
     }
 
     content() {
-        const {menuSelectedOption,users, repositories, fetchUsers, searchCode, codeMatches,saveAccessToken, getInvolvement, involves, accessToken,getRepositories, getPullRequests, pullRequests} = this.props;
+        const {menuSelectedOption,users,commits,getCommits,repositories, fetchUsers, searchCode, codeMatches,saveAccessToken, getInvolvement, involves, accessToken,getRepositories, getPullRequests, pullRequests} = this.props;
         switch (menuSelectedOption) {
             case 'search':
                 return <SearchCode searchCode={searchCode} codeMatches={codeMatches} />;
@@ -29,6 +30,9 @@ class TabWindow extends React.Component {
                 break;
             case 'pull_requests':
                 return <PullRequest pullRequests={pullRequests} getPullRequests={getPullRequests} />;
+                break;
+            case 'commits':
+                return <Commits commits={commits} getCommits={getCommits} />;
                 break;
         }
 
