@@ -9,8 +9,6 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import moment from 'moment';
 
-
-
 class Involves extends  React.Component {
 
     componentDidMount() {
@@ -27,6 +25,7 @@ class Involves extends  React.Component {
         this.state = {filters: {}}
 
     }
+
     setFilter(key, value) {
         const filters = this.state.filters;
         filters[key] = value;
@@ -105,16 +104,16 @@ class Involves extends  React.Component {
                             <TableHeaderColumn>Repository</TableHeaderColumn>
                             <TableHeaderColumn>Type</TableHeaderColumn>
                             <TableHeaderColumn>Status</TableHeaderColumn>
-                            <TableHeaderColumn>Comments</TableHeaderColumn>
                             <TableHeaderColumn>Updated At</TableHeaderColumn>
-                            <TableHeaderColumn>Actions</TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody displayRowCheckbox={false} showRowHover={true}>
                         {involves.map((involve, index) => {
                             return (<TableRow key={involve.id}>
                                 <TableRowColumn className="num">{index + 1}</TableRowColumn>
-                                <TableRowColumn className="title">{involve.title}</TableRowColumn>
+                                <TableRowColumn className="title">
+                                    <a href={involve.html_url} target="_blank">{involve.title}</a>
+                                    </TableRowColumn>
                                 <TableRowColumn className="creator">
                                     <Avatar src={involve.user.avatar_url} />
                                     <small>{involve.user.login}</small>
@@ -138,15 +137,8 @@ class Involves extends  React.Component {
                                     }
                                 </TableRowColumn>
 
-                                <TableRowColumn className="comments">
-                                    {involve.comments}
-                                </TableRowColumn>
-
                                 <TableRowColumn className="updated-at">
                                     {moment(involve.updated_at).fromNow()}
-                                </TableRowColumn>
-                                <TableRowColumn className="actions">
-                                    <FlatButton label="View On Github" primary={true}  href={involve.html_url} target="_blank"/>
                                 </TableRowColumn>
                             </TableRow>)
                         })}

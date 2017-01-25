@@ -12,6 +12,17 @@ import moment from 'moment';
 
 class PullRequest extends  React.Component {
 
+    reviewerColor(status) {
+        switch (status){
+            case 'COMMENTED':
+                return 'grey';
+            case 'CHANGES_REQUESTED':
+                return 'red';
+            case 'APPROVED':
+                return 'green';
+        }
+    }
+
     render() {
         const {pullRequests, getPullRequests} = this.props;
 
@@ -25,13 +36,12 @@ class PullRequest extends  React.Component {
                             <TableHeaderColumn className="num">Num</TableHeaderColumn>
                             <TableHeaderColumn className="creator">Creator</TableHeaderColumn>
                             <TableHeaderColumn className="title">Title</TableHeaderColumn>
-                            <TableHeaderColumn className="body">Body</TableHeaderColumn>
                             <TableHeaderColumn>Repository</TableHeaderColumn>
                             <TableHeaderColumn>Branch Name</TableHeaderColumn>
-                            <TableHeaderColumn className="type">Type</TableHeaderColumn>
                             <TableHeaderColumn className="status">Status</TableHeaderColumn>
+                            <TableHeaderColumn className="approved">Approved</TableHeaderColumn>
+                            <TableHeaderColumn className="reviewers">Reviewers</TableHeaderColumn>
                             <TableHeaderColumn>Updated At</TableHeaderColumn>
-                            <TableHeaderColumn>Actions</TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody preScanRows={false} displayRowCheckbox={false} showRowHover={true}>
@@ -42,9 +52,9 @@ class PullRequest extends  React.Component {
                                     <Avatar src={pr.user.avatar_url} />
                                     <small>{pr.user.login}</small>
                                 </TableRowColumn>
-                                <TableRowColumn className="title">{pr.title}</TableRowColumn>
-                                <TableRowColumn className="body">{pr.body  || 'NO DESCRIPTION' }</TableRowColumn>
-
+                                <TableRowColumn className="title">
+                                    <a  href={pr.html_url} target="_blank">{pr.title}</a>
+                                </TableRowColumn>
 
                                 <TableRowColumn>
                                     <FlatButton target="_blank" href={ pr.head.repo.html_url} label={ pr.head.repo.name} />
@@ -54,19 +64,26 @@ class PullRequest extends  React.Component {
                                     { pr.head.ref}
                                 </TableRowColumn>
 
-                                <TableRowColumn className="type">
-                                    <FontIcon className="material-icons">code</FontIcon>
-                                </TableRowColumn>
-
                                 <TableRowColumn className="status">
                                     <FontIcon className="material-icons" style={{color:'green'}}>lock_open</FontIcon>
                                 </TableRowColumn>
 
+                                <TableRowColumn className="approved">
+                                    {pr.reviews.filter(review => review.state === 'APPROVED').length ?
+                                        <FontIcon className="material-icons" style={{color:'green'}}>check_circle</FontIcon> :
+                                        ''}
+                                </TableRowColumn>
+
+                                <TableRowColumn>
+                                     { pr.reviews.map(review => <Avatar key={review.id} style={{
+                                         border: `3px solid ${this.reviewerColor(review.state)}`,
+                                         marginRight: '5px'
+                                     }
+                                     }  src={review.user.avatar_url}  />) }
+                                </TableRowColumn>
+
                                 <TableRowColumn className="updated-at">
                                     {moment(pr.updated_at).fromNow()}
-                                </TableRowColumn>
-                                <TableRowColumn className="actions">
-                                    <FlatButton label="View On Github" primary={true}  href={pr.html_url} target="_blank"/>
                                 </TableRowColumn>
                             </TableRow>)
                         })}

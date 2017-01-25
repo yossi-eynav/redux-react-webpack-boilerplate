@@ -6,6 +6,10 @@ import Settings from './Tabs/Settings/Settings'
 import PullRequest from './Tabs/PullRequest/PullRequest'
 import Commits from './Tabs/Commits/Commits'
 import Snackbar from 'material-ui/Snackbar';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
+
 
 
 class TabWindow extends React.Component {
@@ -40,18 +44,36 @@ class TabWindow extends React.Component {
 
     render(){
         const {setMenuOption, fetching} = this.props;
+
+        const actions = [
+            <FlatButton
+                label="Cancel"
+                primary={true}
+            />,
+            <FlatButton
+                label="Submit"
+                primary={true}
+                disabled={true}
+            />,
+        ];
+
         return (
-        <div    style={{display: 'flex'}}>
+        <div   style={{display: 'flex'}}>
             <MainMenu style={{flexGrow: 1}} setMenuOption={setMenuOption}  />
             <div style={{flexGrow:10}}>
                 {this.content()}
             </div>
+            <Snackbar open={fetching} message="Fetching Data From Server..."/>
 
-            <Snackbar
-                open={fetching}
-                message="Fetching Data From Server..."
-                />
-        </div>
+            <Dialog
+                title="Dialog With Actions"
+                actions={actions}
+                modal={false}
+                open={true}>
+                The actions in this window were passed in as an array of React objects.
+                <TextField />
+                </Dialog>
+            </div>
         )
 
     }

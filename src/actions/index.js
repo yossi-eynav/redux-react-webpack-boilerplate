@@ -78,13 +78,28 @@ const getPullRequests = () => {
                 })).then((results) => {
                     const pullRequests = results
                                             .reduce((a,b) => a.concat(b))
-                                            .filter((item)=> moment().add(-2,'months').isBefore(item.updated_at))
+                                            .filter((item)=> moment().add(-1,'months').isBefore(item.updated_at))
                                             .sort((a,b) => {
                                                 return moment(a.updated_at).isBefore(b.updated_at) ? 1 : -1
                                             });
 
-                    dispatch(endFetching());
-                    dispatch({type:'FETCHED_PRs', pullRequests});
+                    Promise.all(pullRequests.map(pr => {
+                        return fetch(`https://api.github.com/repos/fiverr/${pr.head.repo.name}/pulls/${pr.number}/reviews?access_token=${token}&per_page=100&state=open`,{
+                            headers: {
+                                'Accept': 'application/vnd.github.black-cat-preview+json'
+                            }
+                        })
+                            .then((response) => response.json())
+                            .then(reviews => {
+                                pr.reviews = reviews;
+                                return pr;
+                            })
+                    })).then((pullRequests) => {
+                        dispatch(endFetching());
+                        dispatch({type:'FETCHED_PRs', pullRequests});
+                    })
+
+
                 })
 
             })
@@ -109,7 +124,10 @@ const getCommits = (since = moment().add(-1,'days').format()) => {
                     })
             })).then((results) => {
                 const commits = results
-                    .reduce((a,b) => a.concat(b));
+                    .reduce((a,b) => a.concat(b))
+                    .sort((a,b) => {
+                        return moment(a.commit.author.date).isBefore(b.commit.author.date) ? 1 : -1
+                    });
 
                 dispatch(endFetching());
                 dispatch({type:'FETCHED_COMMITS', commits});
@@ -173,7 +191,7 @@ const getInvolvement = (userName) => {
   return (dispatch, getState) => {
       dispatch(startFetching());
       const token = getState().get('accessToken');
-    return fetch(`https://api.github.com/search/issues?q=+org:fiverr+involves:${userName}&access_token=${token}&per_page=60`)
+    return fetch(`https://api.github.com/search/issues?q=+org:fiverr+involves:${userName}&access_token=${token}&per_page=100`)
         .then((response) => response.json())
         .then(json => {
             const involves =  json.items.map(involve => {
