@@ -11,7 +11,8 @@ const initialState = Immutable.Map()
                               .set('repositories', [])
                               .set('codeMatches', [])
                               .set('commits', [])
-                              .set('fetching', false);
+                              .set('fetching', false)
+                              .set('filters', Immutable.Map());
 
 
 const reducers = (state = initialState , action) => {
@@ -51,6 +52,9 @@ const reducers = (state = initialState , action) => {
     case 'FETCHED_COMMITS':
       return state.set('commits', action.commits);
       break;
+    case 'NEW_FILTER':
+    return state.update('filters',(map) => map.set(action.filter, action.value));
+    break;
 
     default:
       return state

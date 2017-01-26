@@ -137,6 +137,13 @@ const getCommits = (since = moment().add(-1,'days').format()) => {
     }
 };
 
+function setFilter(filter, value) {
+  return {
+    type: 'NEW_FILTER',
+    filter,
+    value
+  }
+}
 
 const saveAccessToken = (accessToken) => {
   return {
@@ -216,5 +223,6 @@ export {
     fetchUsers,
     setMenuOption,
     getRepositories,
-    getCommits
+    getCommits,
+    setFilter
 };

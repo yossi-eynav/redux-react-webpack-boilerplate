@@ -8,6 +8,8 @@ import FontIcon from 'material-ui/FontIcon';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import moment from 'moment';
+import Filters from '../../Filters/Filters'
+
 
 class Involves extends  React.Component {
 
@@ -33,15 +35,15 @@ class Involves extends  React.Component {
     }
 
     render() {
-        let {users, getInvolvement, involves, repositories} = this.props;
+        let {users, getInvolvement, involves,filters, repositories, setFilter} = this.props;
 
-        const filters = this.state.filters;
+        // const filters = this.state.filters;
 
-        involves = involves.filter(involve => {
-            return (!filters.repository || involve.repositoryName.match(filters.repository)) &&
-            (!filters.username || involve.user.login.match(filters.username)) &&
-            (!filters.state || involve.state.match(filters.state));
-        });
+        // involves = involves.filter(involve => {
+        //     return (!filters.repository || involve.repositoryName.match(filters.repository)) &&
+        //     (!filters.username || involve.user.login.match(filters.username)) &&
+        //     (!filters.state || involve.state.match(filters.state));
+        // });
 
 
         return (
@@ -58,43 +60,9 @@ class Involves extends  React.Component {
                     maxSearchResults={10}
                     onNewRequest={(val) => getInvolvement(val)}
                 />
-
-                <SelectField
-                    floatingLabelText="Username:"
-                    value="username"
-                    onChange={(event,index, value) => {
-                        this.setFilter.bind(this)('username', value)
-                    }}
-                >
-                    <MenuItem value="" primaryText="All" />
-                    {users.map(user =>  <MenuItem value={user.login} primaryText={user.login} /> )}
-                </SelectField>
-
-
-                <SelectField
-                    floatingLabelText="Repositories:"
-                    value="repository"
-                    onChange={(event,index, value) => {
-                        this.setFilter.bind(this)('repository', value)
-                    }}
-                >
-                    <MenuItem value="" primaryText="All" />
-                    {repositories.map(repo =>  <MenuItem value={repo.name} primaryText={repo.name} /> )}
-                </SelectField>
-
-                <SelectField
-                    floatingLabelText="Status:"
-                    value=""
-                    onChange={(event,index, value) => {
-                        this.setFilter.bind(this)('state', value)
-                    }}
-                >
-                    <MenuItem value="" primaryText="All" />
-                    <MenuItem value="open" primaryText="Open" />
-                    <MenuItem value="closed" primaryText="Closed" />
-                </SelectField>
-
-
+                
+                <Filters users={users} filters={filters} repositories={repositories} setFilter={setFilter} />
+                
                 <Table>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false} displayRowCheckbox={false}>
                         <TableRow>

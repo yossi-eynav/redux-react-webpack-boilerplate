@@ -12,6 +12,10 @@ import moment from 'moment';
 
 class PullRequest extends  React.Component {
 
+    componentDidMount() {
+        this.props.getPullRequests();
+    }
+    
     reviewerColor(status) {
         switch (status){
             case 'COMMENTED':
@@ -29,7 +33,6 @@ class PullRequest extends  React.Component {
         return (
             <div className="pull-requests">
                 <h1> Pull Requests</h1>
-                <RaisedButton label="Fetch Pull Requests!" primary={true}  onClick={() => {getPullRequests()}} />
                 <Table>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false} displayRowCheckbox={false}>
                         <TableRow>

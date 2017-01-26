@@ -12,6 +12,7 @@ import TokenDialog from './TokenDialog/TokenDialog'
 
 
 
+
 class TabWindow extends React.Component {
 
     componentDidMount() {
@@ -21,13 +22,13 @@ class TabWindow extends React.Component {
     }
 
     content() {
-        const {menuSelectedOption,users,commits,getCommits,repositories, fetchUsers, searchCode, codeMatches,saveAccessToken, getInvolvement, involves, accessToken,getRepositories, getPullRequests, pullRequests} = this.props;
+        const {menuSelectedOption,users,commits,getCommits,repositories, filters, fetchUsers, setFilter,searchCode, codeMatches,saveAccessToken, getInvolvement, involves, accessToken,getRepositories, getPullRequests, pullRequests} = this.props;
         switch (menuSelectedOption) {
             case 'search':
                 return <SearchCode searchCode={searchCode} codeMatches={codeMatches} />;
                 break;
             case 'involves':
-                return <InvolveTab repositories={repositories} users={users} fetchUsers={fetchUsers} getInvolvement={getInvolvement} involves={involves} />;
+                return <InvolveTab filters={filters} repositories={repositories} setFilter={setFilter} users={users} fetchUsers={fetchUsers} getInvolvement={getInvolvement} involves={involves} />;
                 break;
 
             case 'pull_requests':
@@ -41,12 +42,12 @@ class TabWindow extends React.Component {
     }
 
     render(){
-        const {setMenuOption, fetching, saveAccessToken, accessToken} = this.props;
+        const {setMenuOption,title ,fetching, saveAccessToken, accessToken, users, repositories} = this.props;
 
         return (
-        <div style={{display: 'flex'}}>
-            <MainMenu style={{flexGrow: 1}} setMenuOption={setMenuOption}  />
-            <div style={{flexGrow:10}}>
+        <div>
+            <MainMenu setMenuOption={setMenuOption}  />
+            <div>
                 {this.content()}
             </div>
             <Snackbar open={fetching} message="Fetching Data From Server..."/>
