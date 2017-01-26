@@ -11,16 +11,10 @@ import moment from 'moment';
 import Filters from '../../Filters/Filters'
 
 
+
+
+
 class Involves extends  React.Component {
-
-    componentDidMount() {
-        const fetchUsers = this.props.fetchUsers;
-        fetchUsers();
-    }
-
-    componentDidUpdate() {
-       this.refs.user_search.focus();
-    }
 
     constructor(props) {
         super(props);
@@ -35,40 +29,39 @@ class Involves extends  React.Component {
     }
 
     render() {
-        let {users, getInvolvement, involves,filters, repositories, setFilter} = this.props;
+        let {users, getInvolvement,clearFilters,involves, filters, repositories, setFilter} = this.props;
 
-        // const filters = this.state.filters;
-
-        // involves = involves.filter(involve => {
-        //     return (!filters.repository || involve.repositoryName.match(filters.repository)) &&
-        //     (!filters.username || involve.user.login.match(filters.username)) &&
-        //     (!filters.state || involve.state.match(filters.state));
-        // });
+        involves = involves.filter(involve => {
+            return involve.repositoryName.match(new RegExp(filters.get('repository'))) &&
+            involve.user.login.match(new RegExp(filters.get('author'))) &&
+            involve.state.match(new RegExp(filters.get('state')));
+        });
 
 
         return (
             <div className="involves">
-                <h1> Involves</h1>
-                <AutoComplete
-                    className="search-users"
-                    hintText="Search Fiverr's organization members"
-                    ref="user_search"
-                    fullWidth={true}
-                    style={{width: '500px'}}
-                    dataSource={ users.map(user => user.login)}
-                    filter={ (query, key) => key.match(new RegExp(query ,'gi'))}
-                    maxSearchResults={10}
-                    onNewRequest={(val) => getInvolvement(val)}
-                />
-                
-                <Filters users={users} filters={filters} repositories={repositories} setFilter={setFilter} />
+                <div>
+                    <h1> Involves</h1>
+                    <AutoComplete
+                        className="search-users"
+                        hintText="Search Fiverr's organization members"
+                        ref="user_search"
+                        fullWidth={true}
+                        style={{width: '500px'}}
+                        dataSource={ users.map(user => user.login)}
+                        filter={ (query, key) => key.match(new RegExp(query ,'gi'))}
+                        maxSearchResults={10}
+                        onNewRequest={(val) => getInvolvement(val)}
+                    />
+                </div>
+                <Filters clearFilters={clearFilters} users={users} filters={filters} repositories={repositories} setFilter={setFilter} />
                 
                 <Table>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false} displayRowCheckbox={false}>
                         <TableRow>
                             <TableHeaderColumn className="num">Num</TableHeaderColumn>
                             <TableHeaderColumn className="title">Title</TableHeaderColumn>
-                            <TableHeaderColumn className="creator">Creator</TableHeaderColumn>
+                            <TableHeaderColumn className="author">Author</TableHeaderColumn>
                             <TableHeaderColumn>Repository</TableHeaderColumn>
                             <TableHeaderColumn>Type</TableHeaderColumn>
                             <TableHeaderColumn>Status</TableHeaderColumn>
@@ -82,7 +75,7 @@ class Involves extends  React.Component {
                                 <TableRowColumn className="title">
                                     <a href={involve.html_url} target="_blank">{involve.title}</a>
                                     </TableRowColumn>
-                                <TableRowColumn className="creator">
+                                <TableRowColumn className="author">
                                     <Avatar src={involve.user.avatar_url} />
                                     <small>{involve.user.login}</small>
                                 </TableRowColumn>

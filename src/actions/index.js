@@ -53,6 +53,8 @@ function getRepositories() {
     const date = moment().add(-1, 'months').format('YYYY-MM-DD');
     return (dispatch, getState) => {
         const token = getState().get('accessToken');
+        if(!token) {return; }
+
         return fetch(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
             .then((response) => response.json())
             .then((response) => {
@@ -69,11 +71,13 @@ const getPullRequests = () => {
         dispatch(startFetching());
         const state = getState();
         const token = state.get('accessToken');
+        if(!token) {return; }
+
         let repositories = [];
             new Promise(() => {
                 repositories = state.get('repositories');
                 Promise.all(repositories.map((repository) => {
-                    return fetch(`https://api.github.com/repos/fiverr/${repository.name}/pulls?access_token=${token}&per_page=100&state=open`)
+                    return fetch(`https://api.github.com/repos/fiverr/${repository.name}/pulls?access_token=${token}&per_page=100&state=all`)
                         .then((response) => response.json())
                 })).then((results) => {
                     const pullRequests = results
@@ -91,7 +95,13 @@ const getPullRequests = () => {
                         })
                             .then((response) => response.json())
                             .then(reviews => {
-                                pr.reviews = reviews;
+                                const uniqueReviews = new Set();
+                                reviews.forEach((review) => {
+                                        (reviews || []).forEach((review) => {
+                                        uniqueReviews.add(`${review.user.login}~${review.state}~${review.user.avatar_url}`)
+                                    });
+                                });
+                                pr.reviews = uniqueReviews;
                                 return pr;
                             })
                     })).then((pullRequests) => {
@@ -106,11 +116,20 @@ const getPullRequests = () => {
     }
 };
 
-const getCommits = (since = moment().add(-1,'days').format()) => {
+
+const clearFilters = () => {
+    return {
+        type: 'CLEAR_FILTERS'
+    }
+};
+
+const getCommits = (since = moment().add(-7,'days').format()) => {
     return (dispatch, getState) => {
         dispatch(startFetching());
         const state = getState();
         const token = state.get('accessToken');
+        if(!token) {return; }
+
         let repositories = [];
         new Promise(() => {
             repositories = state.get('repositories');
@@ -155,7 +174,7 @@ const saveAccessToken = (accessToken) => {
 const getSuggestions = () => {
   return (dispatch, getState) => {
     const state = getState();
-    const query = state.get('query')
+    const query = state.get('query');
     if (query.match(''))
 
 
@@ -176,14 +195,15 @@ const fetchUsers = () => {
   return (dispatch, getState) => {
       dispatch(startFetching());
       const token = getState().get('accessToken');
-    let users = [];
+      if(!token) {return; }
 
+      let users = [];
 
     getUsersByPage(1)
     .then(() => getUsersByPage(2))
         .then(() => {
             dispatch(endFetching());
-            dispatch({type: 'FETCHED_USERS', users: users})
+            dispatch({type: 'FETCHED_USERS', users})
         });
 
     function getUsersByPage(page = 1) {
@@ -224,5 +244,6 @@ export {
     setMenuOption,
     getRepositories,
     getCommits,
-    setFilter
+    setFilter,
+    clearFilters
 };

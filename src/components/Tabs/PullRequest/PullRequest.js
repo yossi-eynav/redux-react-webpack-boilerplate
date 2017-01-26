@@ -5,7 +5,7 @@ import FlatButton from 'material-ui/FlatButton';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
-import RaisedButton from 'material-ui/RaisedButton';
+import Filters from '../../Filters/Filters';
 import moment from 'moment';
 
 
@@ -16,6 +16,17 @@ class PullRequest extends  React.Component {
         this.props.getPullRequests();
     }
     
+    getReviewers(uniqueReviewers) {
+        return uniqueReviewers.map(review => {
+            review = review.split('~');
+           return <Avatar key={review} style={{
+                                         border: `3px solid ${this.reviewerColor(review[1])}`,
+                                         marginRight: '5px'
+                                     }
+       }  src={review[2]}  />
+        })
+    }
+
     reviewerColor(status) {
         switch (status){
             case 'COMMENTED':
@@ -28,16 +39,24 @@ class PullRequest extends  React.Component {
     }
 
     render() {
-        const {pullRequests, getPullRequests} = this.props;
+        const {filters ,clearFilters, users, repositories, setFilter} = this.props;
+        let pullRequests = this.props.pullRequests;
+
+        pullRequests = pullRequests.filter(pr => {
+            return pr.head.repo.name.match(new RegExp(filters.get('repository'))) &&
+                pr.user.login.match(new RegExp(filters.get('author'))) &&
+                Array.from(pr.reviews.values()).filter(review => review.match(new RegExp(filters.get('approved')))).length
+    });
 
         return (
             <div className="pull-requests">
                 <h1> Pull Requests</h1>
+                <Filters clearFilters={clearFilters} users={users} filters={filters} repositories={repositories} setFilter={setFilter} />
                 <Table>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false} displayRowCheckbox={false}>
                         <TableRow>
                             <TableHeaderColumn className="num">Num</TableHeaderColumn>
-                            <TableHeaderColumn className="creator">Creator</TableHeaderColumn>
+                            <TableHeaderColumn className="author">Author</TableHeaderColumn>
                             <TableHeaderColumn className="title">Title</TableHeaderColumn>
                             <TableHeaderColumn>Repository</TableHeaderColumn>
                             <TableHeaderColumn>Branch Name</TableHeaderColumn>
@@ -51,7 +70,7 @@ class PullRequest extends  React.Component {
                         {pullRequests.map((pr, index) => {
                             return (<TableRow key={pr.id}>
                                 <TableRowColumn className="num">{index + 1}</TableRowColumn>
-                                <TableRowColumn className="creator">
+                                <TableRowColumn className="author">
                                     <Avatar src={pr.user.avatar_url} />
                                     <small>{pr.user.login}</small>
                                 </TableRowColumn>
@@ -72,17 +91,13 @@ class PullRequest extends  React.Component {
                                 </TableRowColumn>
 
                                 <TableRowColumn className="approved">
-                                    {pr.reviews.filter(review => review.state === 'APPROVED').length ?
+                                    {Array.from(pr.reviews.values()).filter(review => review.match('APPROVED')).length ?
                                         <FontIcon className="material-icons" style={{color:'green'}}>check_circle</FontIcon> :
                                         ''}
                                 </TableRowColumn>
 
                                 <TableRowColumn>
-                                     { pr.reviews.map(review => <Avatar key={review.id} style={{
-                                         border: `3px solid ${this.reviewerColor(review.state)}`,
-                                         marginRight: '5px'
-                                     }
-                                     }  src={review.user.avatar_url}  />) }
+                                     { this.getReviewers(Array.from(pr.reviews.values()))}
                                 </TableRowColumn>
 
                                 <TableRowColumn className="updated-at">

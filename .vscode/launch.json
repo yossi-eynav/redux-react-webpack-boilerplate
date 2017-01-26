@@ -4,6 +4,7 @@
         {
             "name": "Launch Chrome against localhost, with sourcemaps",
             "type": "chrome",
+            "runtimeExecutable": "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
             "request": "launch",
             "url": "http://localhost:4444",
             "sourceMaps": true,

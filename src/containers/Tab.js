@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { saveAccessToken,getCommits,searchCode,setFilter,getSuggestions, setMenuOption, fetchUsers, getInvolvement, getPullRequests, getRepositories} from '../actions'
+import { saveAccessToken,getCommits,clearFilters,searchCode,setFilter,getSuggestions, setMenuOption, fetchUsers, getInvolvement, getPullRequests, getRepositories} from '../actions'
 import TabWindow from '../components/TabWindow'
 
 
@@ -35,11 +35,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     getPullRequests: () => dispatch(getPullRequests()),
     getRepositories: () => dispatch(getRepositories()),
     getCommits: (from, to) => dispatch(getCommits(from, to)),
-    setFilter: (filter, val) => dispatch(setFilter(filter, val)) 
+    setFilter: (filter, val) => dispatch(setFilter(filter, val)),
+    clearFilters: ()=> dispatch(clearFilters())
   }
 };
-
-// let boundActionCreators = bindActionCreators(TodoActionCreators, dispatch)
 
 const Tab = connect(
   mapStateToProps,
