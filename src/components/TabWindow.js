@@ -13,7 +13,7 @@ import TokenDialog from './TokenDialog/TokenDialog'
 
 class TabWindow extends React.Component {
 
-    componentDidMount() {
+    componentDidUpdate() {
         const {fetchUsers,getRepositories } = this.props;
         fetchUsers();
         getRepositories();
