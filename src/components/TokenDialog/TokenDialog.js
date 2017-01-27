@@ -9,12 +9,14 @@ class TokenDialog extends React.Component {
 
 
     saveBtnHandler() {
-        const {saveAccessToken} = this.props;
+        const {saveAccessToken, fetchUsers, getRepositories} = this.props;
         const token = this.refs.token.getValue();
         if (!token) { return;}
         
         localStorage.setItem('accessToken', token);
         saveAccessToken(token)
+        fetchUsers();
+        getRepositories();
     }
 
     render() {

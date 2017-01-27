@@ -13,7 +13,7 @@ import TokenDialog from './TokenDialog/TokenDialog'
 
 class TabWindow extends React.Component {
 
-    componentDidUpdate() {
+    componentDidMount() {
         const {fetchUsers,getRepositories } = this.props;
         fetchUsers();
         getRepositories();
@@ -40,7 +40,7 @@ class TabWindow extends React.Component {
     }
 
     render(){
-        const {setMenuOption,title ,fetching, saveAccessToken, accessToken, users, repositories} = this.props;
+        const {setMenuOption,title ,fetchUsers,getRepositories,fetching, saveAccessToken, accessToken, users, repositories} = this.props;
 
         return (
         <div>
@@ -49,7 +49,7 @@ class TabWindow extends React.Component {
                 {this.content()}
             </div>
             <Snackbar open={fetching} message="Fetching Data From Server." />
-                {!accessToken && <TokenDialog saveAccessToken={saveAccessToken} />}
+                {!accessToken && <TokenDialog fetchUsers={fetchUsers}  getRepositories={getRepositories} saveAccessToken={saveAccessToken} />}
             </div>
         )
 
