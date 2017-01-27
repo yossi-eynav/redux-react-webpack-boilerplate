@@ -1,5 +1,5 @@
-const ACCESS_KEY_ENTERED_ACTION = 'ACCESS_KEY_ENTERED'
-const SEARCH = 'SEARCH'
+const ACCESS_KEY_ENTERED_ACTION = 'ACCESS_KEY_ENTERED';
+const SEARCH = 'SEARCH';
 import moment from 'moment';
 
 const startFetching = () => {
@@ -48,6 +48,13 @@ const searchCode = (query) => {
   }
 };
 
+function getNextPaginationLink(response) {
+    const linkHeader = response.headers.get('Link');
+    if(!linkHeader) {return null;}
+
+    const matches = linkHeader.match(/<(.*)>; rel="next"/);
+    return matches && matches[1]
+}
 
 function getRepositories() {
     const date = moment().add(-1, 'months').format('YYYY-MM-DD');
@@ -55,14 +62,17 @@ function getRepositories() {
         const token = getState().get('accessToken');
         if(!token) {return; }
 
-        return fetch(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
-            .then((response) => response.json())
-            .then((response) => {
-                const repositories = response.items.filter((repo) => repo.size != 0);
+        return githubFetching(`https://api.github.com/search/repositories?q=+org:fiverr+pushed:>${date}&access_token=${token}&per_page=100`)
+            .then(response => {
+                let repositories = response.map((item) =>item.items)
+                    .reduce((a,b) => a.concat(b));
+                repositories = repositories.filter((repo) => repo.size != 0);
                 dispatch({type:'FETCHED_REPOSITORIES',repositories});
             })
     };
 }
+
+
 
 
 const getPullRequests = () => {
@@ -77,6 +87,7 @@ const getPullRequests = () => {
             new Promise(() => {
                 repositories = state.get('repositories');
                 Promise.all(repositories.map((repository) => {
+
                     return fetch(`https://api.github.com/repos/fiverr/${repository.name}/pulls?access_token=${token}&per_page=100&state=all`)
                         .then((response) => response.json())
                 })).then((results) => {
@@ -85,10 +96,10 @@ const getPullRequests = () => {
                                             .filter((item)=> moment().add(-1,'months').isBefore(item.updated_at))
                                             .sort((a,b) => {
                                                 return moment(a.updated_at).isBefore(b.updated_at) ? 1 : -1
-                                            });
+                                            }).slice(0, 250);
 
                     Promise.all(pullRequests.map(pr => {
-                        return fetch(`https://api.github.com/repos/fiverr/${pr.head.repo.name}/pulls/${pr.number}/reviews?access_token=${token}&per_page=100&state=open`,{
+                        return fetch(`https://api.github.com/repos/fiverr/${pr.head.repo.name}/pulls/${pr.number}/reviews?access_token=${token}&per_page=100`,{
                             headers: {
                                 'Accept': 'application/vnd.github.black-cat-preview+json'
                             }
@@ -116,6 +127,25 @@ const getPullRequests = () => {
     }
 };
 
+function githubFetching(url, previousRequestData = []){
+    return fetch(url)
+        .then((response) => {
+        const nextURL = getNextPaginationLink(response);
+        if (nextURL) {
+            return response.json()
+                .then(json => {
+                    previousRequestData.push(json);
+                    return githubFetching(nextURL, previousRequestData);
+                })
+        } else {
+            return response.json()
+                .then(json => {
+                    previousRequestData.push(json);
+                    return previousRequestData;
+                })
+        }
+    });
+}
 
 const clearFilters = () => {
     return {
@@ -123,7 +153,7 @@ const clearFilters = () => {
     }
 };
 
-const getCommits = (since = moment().add(-7,'days').format()) => {
+const getCommits = (since = moment().add(-10,'days').format()) => {
     return (dispatch, getState) => {
         dispatch(startFetching());
         const state = getState();
@@ -134,8 +164,9 @@ const getCommits = (since = moment().add(-7,'days').format()) => {
         new Promise(() => {
             repositories = state.get('repositories');
             Promise.all(repositories.map((repository) => {
-                return fetch(`https://api.github.com/repos/fiverr/${repository.name}/commits?since=${since}&access_token=${token}&per_page=100&state=open`)
-                    .then((response) => response.json()).then((commits) => {
+                return githubFetching(`https://api.github.com/repos/fiverr/${repository.name}/commits?since=${since}&access_token=${token}&per_page=100`)
+                    .then((response) => {
+                        const commits = response.reduce((a,b) => a.concat(b));
                         return commits.map(commit => {
                             commit.repository = repository;
                             return commit;
@@ -197,20 +228,12 @@ const fetchUsers = () => {
       const token = getState().get('accessToken');
       if(!token) {return; }
 
-      let users = [];
-
-    getUsersByPage(1)
-    .then(() => getUsersByPage(2))
-        .then(() => {
+    githubFetching(`https://api.github.com/orgs/fiverr/members?per_page=100&access_token=${token}`)
+    .then((response) => response.reduce((a,b) => a.concat(b)))
+        .then((users) => {
             dispatch(endFetching());
             dispatch({type: 'FETCHED_USERS', users})
         });
-
-    function getUsersByPage(page = 1) {
-      return fetch(`https://api.github.com/orgs/fiverr/members?per_page=100&access_token=${token}&page=${page}`)
-          .then((response) => response.json())
-          .then(json => {users = users.concat(json)})
-    }
   }
 };
 

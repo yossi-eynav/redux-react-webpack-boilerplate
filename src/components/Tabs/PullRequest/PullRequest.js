@@ -43,9 +43,11 @@ class PullRequest extends  React.Component {
         let pullRequests = this.props.pullRequests;
 
         pullRequests = pullRequests.filter(pr => {
+            const reviews = Array.from(pr.reviews.values());
             return pr.head.repo.name.match(new RegExp(filters.get('repository'))) &&
                 pr.user.login.match(new RegExp(filters.get('author'))) &&
-                Array.from(pr.reviews.values()).filter(review => review.match(new RegExp(filters.get('approved')))).length
+                pr.state.match(new RegExp(filters.get('state'))) &&
+                (!reviews.length || reviews.filter(review => review.match(new RegExp(filters.get('approved')))).length)
     });
 
         return (
@@ -87,7 +89,10 @@ class PullRequest extends  React.Component {
                                 </TableRowColumn>
 
                                 <TableRowColumn className="status">
-                                    <FontIcon className="material-icons" style={{color:'green'}}>lock_open</FontIcon>
+                                    { pr.state === 'open' ?
+                                        <FontIcon className="material-icons" style={{color:'green'}}>lock_open</FontIcon> :
+                                        <FontIcon className="material-icons" style={{color:'red'}}>lock_outline</FontIcon>
+                                    }
                                 </TableRowColumn>
 
                                 <TableRowColumn className="approved">

@@ -43,7 +43,7 @@ const Filters = ({users, repositories, setFilter, filters, clearFilters}) => {
 
 
                         <SelectField className="filter"
-                                     floatingLabelText="Status:"
+                                     floatingLabelText="State:"
                                      floatingLabelFixed={true}
 
                                      value={filters.get('state')}

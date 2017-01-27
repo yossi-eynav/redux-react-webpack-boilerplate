@@ -30,14 +30,14 @@ class Commits extends  React.Component {
                             <TableHeaderColumn>Title</TableHeaderColumn>
                             <TableHeaderColumn>Author</TableHeaderColumn>
                             <TableHeaderColumn>Repository</TableHeaderColumn>
-                            <TableHeaderColumn>Updated At</TableHeaderColumn>
+                            <TableHeaderColumn>Relative Updated At</TableHeaderColumn>
+                            <TableHeaderColumn>ISO Updated At</TableHeaderColumn>
                         </TableRow>
                     </TableHeader>
                     <TableBody displayRowCheckbox={false} showRowHover={true}>
                         {commits.map((item, index) => {
                             let date = moment(item.commit.author.date);
-                            date = date.isAfter(moment().add(-3,'days')) 
-                            ?  date.fromNow() : date.format('YYYY-MM-DD, HH:MM:SS')
+                    
         
                             return (<TableRow key={item.id}>
                                 <TableRowColumn className="num">{index + 1}</TableRowColumn>
@@ -52,8 +52,12 @@ class Commits extends  React.Component {
                                     { item.repository.name }
                                 </TableRowColumn>
                                 <TableRowColumn className="updated-at">
-                                    { date }
+                                    { date.fromNow() }
                                 </TableRowColumn>
+                                   <TableRowColumn className="updated-at">
+                                    { date.format('YYYY-MM-DD, HH:MM:SS') }
+                                </TableRowColumn>
+
                             </TableRow>)
                         })}
 
