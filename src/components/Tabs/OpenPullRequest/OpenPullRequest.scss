@@ -1,0 +1,28 @@
+.open-pull-requests{
+
+  .creator small {
+    position: relative;
+    top: -15px;
+    left: 10px;
+    font-size: 12px;
+  }
+
+  @media (min-width: 1300px) {
+
+    .num {
+      width: 2%;
+    }
+
+    .type,
+    .status {
+      width: 50px;
+    }
+
+    .title {
+      width: 400px;
+    }
+
+  }
+
+
+}

@@ -1,11 +1,15 @@
 .search-code {
 
-  .code-match {
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    background: #272822;
-    color: #a7e040;
+  .chips {
+    margin-bottom: 70px;
+  }
+
+  .chip {
+    float: left;
+  }
+
+  code {
     padding: 30px;
-    margin-bottom: 30px;
   }
 }
 

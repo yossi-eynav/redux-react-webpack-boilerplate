@@ -19,24 +19,27 @@ const searchCode = (query) => {
   return (dispatch, getState) => {
       dispatch(startFetching());
     const token = getState().get('accessToken');
-    return fetch(`https://api.github.com/search/code?q=${query}+org:fiverr&access_token=${token}&per_page=100`,
-        {headers: {
+    return githubFetching(`https://api.github.com/search/code?q=${query}+org:fiverr&access_token=${token}&per_page=100`,[],{
           'Accept': 'application/vnd.github.v3.text-match+json'
-        }}
-    )
-        .then((response) => response.json())
-        .then(json => {
-
-          let entites = (json.items || []).filter(item => {
-            return item.text_matches && item.text_matches[0].matches
-          }).sort((a,b) => {
-            return (a.repository.name > b.repository.name) ? 1 : -1
+        })
+        .then(response => {
+         let items = response.map(item => item.items).reduce((a,b) => a.concat(b))
+                                .sort((a,b) => {
+                                    if (a.repository.name > b.repository.name) return 1;
+                                    if (a.repository.name < b.repository.name) return -1;
+                                    return 0;
+                                    }
+                                );
+                
+         let entites = (items || []).filter(item => {
+            return item.text_matches
           }).map((item) => {
 
             const textMatch = Array.isArray(item.text_matches) ? item.text_matches.pop() : item.text_matches;
             item.fragment = textMatch.fragment;
             return item;
           });
+
             dispatch(endFetching());
           dispatch(
               {
@@ -127,15 +130,15 @@ const getPullRequests = () => {
     }
 };
 
-function githubFetching(url, previousRequestData = []){
-    return fetch(url)
+function githubFetching(url, previousRequestData = [], headers){
+return fetch(url, {headers})
         .then((response) => {
         const nextURL = getNextPaginationLink(response);
         if (nextURL) {
             return response.json()
                 .then(json => {
                     previousRequestData.push(json);
-                    return githubFetching(nextURL, previousRequestData);
+                    return githubFetching(nextURL, previousRequestData, headers);
                 })
         } else {
             return response.json()
