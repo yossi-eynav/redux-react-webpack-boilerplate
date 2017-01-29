@@ -4,35 +4,43 @@ import TextField from 'material-ui/TextField';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/FlatButton';
 import Chip from 'material-ui/Chip';
+import IconButton from 'material-ui/IconButton';
+import FontIcon from 'material-ui/FontIcon';
 import Highlight from 'react-highlight';
+import MainMenu from '../../MainMenu/MainMenu'
+
+
 
 class SearchCode extends React.Component{
-
-    componentDidUpdate() {
-        this.refs.code_search.focus();
-    }
 
     render(){
 
 
- let timeout;
  const {codeMatches, searchCode} = this.props;
  const repositories = Array.from(new Set(codeMatches.map(match => match.repository.name)))
  let lastRepo = null;
 
 return (
         <div className="search-code">
+        <MainMenu />
             <h1> Search Code</h1>
+            <div>
             <TextField
                 key="code_search"
                 name="code_search"
                 ref="code_search"
+                hintText="Insert Query And Hit Enter"
                 fullWidth={true}
-                onChange={(_,query)=> {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => {searchCode(query)},500)
+                onKeyDown={(event)=> 
+                    {
+                        if(event.keyCode != 13) { return; }
+                        searchCode(event.target.value)
                 }}
             />
+    
+
+            </div>
+
 
             <div>
             <p> Matches Count: {codeMatches.length} </p>

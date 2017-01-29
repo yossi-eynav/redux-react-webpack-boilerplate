@@ -9,6 +9,7 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import moment from 'moment';
 import Filters from '../../Filters/Filters'
+import MainMenu from '../../MainMenu/MainMenu'
 
 
 
@@ -40,6 +41,7 @@ class Involves extends  React.Component {
 
         return (
             <div className="involves">
+            <MainMenu />
                 <div>
                     <h1> Involves</h1>
                     <AutoComplete

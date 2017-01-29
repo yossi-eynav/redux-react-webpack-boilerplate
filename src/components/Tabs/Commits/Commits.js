@@ -3,6 +3,7 @@ import './commits.scss';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import Avatar from 'material-ui/Avatar';
 import moment from 'moment';
+import MainMenu from '../../MainMenu/MainMenu'
 
 
 
@@ -22,6 +23,7 @@ class Commits extends  React.Component {
 
         return (
             <div className="commits">
+            <MainMenu />
                 <h1> Commits</h1>
                 <Table>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false} displayRowCheckbox={false}>

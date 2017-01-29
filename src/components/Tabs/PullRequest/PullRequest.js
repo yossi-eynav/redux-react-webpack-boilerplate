@@ -7,6 +7,7 @@ import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
 import Filters from '../../Filters/Filters';
 import moment from 'moment';
+import MainMenu from '../../MainMenu/MainMenu'
 
 
 
@@ -52,6 +53,7 @@ class PullRequest extends  React.Component {
 
         return (
             <div className="pull-requests">
+            <MainMenu />
                 <h1> Pull Requests</h1>
                 <Filters clearFilters={clearFilters} users={users} filters={filters} repositories={repositories} setFilter={setFilter} />
                 <Table>
