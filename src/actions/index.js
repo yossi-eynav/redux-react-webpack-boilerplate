@@ -90,7 +90,6 @@ const getPullRequests = () => {
             new Promise(() => {
                 repositories = state.get('repositories');
                 Promise.all(repositories.map((repository) => {
-
                     return fetch(`https://api.github.com/repos/fiverr/${repository.name}/pulls?access_token=${token}&per_page=100&state=all`)
                         .then((response) => response.json())
                 })).then((results) => {
@@ -99,7 +98,9 @@ const getPullRequests = () => {
                                             .filter((item)=> moment().add(-1,'months').isBefore(item.updated_at))
                                             .sort((a,b) => {
                                                 return moment(a.updated_at).isBefore(b.updated_at) ? 1 : -1
-                                            }).slice(0, 250);
+                                            }).slice(0, 140);
+
+                                            console.info(pullRequests);
 
                     Promise.all(pullRequests.map(pr => {
                         return fetch(`https://api.github.com/repos/fiverr/${pr.head.repo.name}/pulls/${pr.number}/reviews?access_token=${token}&per_page=100`,{

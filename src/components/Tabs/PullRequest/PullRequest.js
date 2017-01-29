@@ -12,10 +12,6 @@ import MainMenu from '../../MainMenu/MainMenu'
 
 
 class PullRequest extends  React.Component {
-
-    componentDidMount() {
-        this.props.getPullRequests();
-    }
     
     getReviewers(uniqueReviewers) {
         return uniqueReviewers.map(review => {
@@ -53,8 +49,11 @@ class PullRequest extends  React.Component {
 
         return (
             <div className="pull-requests">
-            <MainMenu />
+                 <MainMenu />
                 <h1> Pull Requests</h1>
+                <FlatButton onClick={(() => {
+                    this.props.getPullRequests();
+        }).bind(this)} label="Fetch Pull Requests:"  />
                 <Filters clearFilters={clearFilters} users={users} filters={filters} repositories={repositories} setFilter={setFilter} />
                 <Table>
                     <TableHeader displaySelectAll={false} adjustForCheckbox={false} displayRowCheckbox={false}>
